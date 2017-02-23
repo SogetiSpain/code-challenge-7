@@ -38,6 +38,7 @@ Para nota :-)
 *  Añadir la funcionalidad de buscar y ver notas individuales
 *  Sustituir la API REST (una vez hecha) por una librría cliente de Firebase
 *  Añadir la posibilidad de etiquetar notas
+*  Usar otro back-end parecido (DocumentDB, MongoDB, AWS, Table Storage) con los mínimos cambios de la aplicación
 
 ¿Cómo subir mi código a GitHub?
 ===============================
