@@ -33,6 +33,12 @@ Restricciones
 *  Crear un fichero de configuración que guarde la clave API de Firebase
 *  Usar la [API REST de Firebase](https://firebase.google.com/docs/database/rest/start) en vez de una librería cliente
 
+Para nota :-)
+-------------
+*  Añadir la funcionalidad de buscar y ver notas individuales
+*  Sustituir la API REST (una vez hecha) por una librría cliente de Firebase
+*  Añadir la posibilidad de etiquetar notas
+
 ¿Cómo subir mi código a GitHub?
 ===============================
 En vez de enviar el código a mi correo, tenéis que hacer lo siguiente:
