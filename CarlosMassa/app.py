@@ -7,6 +7,7 @@ from parsers import MyNotesParser
 if __name__ == '__main__':
     print(settings.BANNER)
     print(settings.USAGE)
+
     while True:
         try:
             command = input('MyNotes> ')
@@ -16,4 +17,3 @@ if __name__ == '__main__':
                 MyNotesParser().parse_command(command)
         except(KeyboardInterrupt, EOFError):
             raise MyNotesException
-

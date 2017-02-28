@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import configparser
-import sys
 import shlex
+import sys
+import threading
+
 import settings
 from connectors import *
 
@@ -32,6 +33,22 @@ class MyNotesParser:
         else:
             print("There are no notes matching your search")
 
+    def __execute_action(self, datasource, action, additional):
+        connector = ConnectorFactory().get_connector(datasource)
+        if action == "new":
+            self.__parse_new(connector, additional)
+        elif action == "search":
+            self.__parse_search(connector, additional)
+        elif action == "show":
+            [print(str(note)) for note in connector.find_all()]
+        else:
+            print('Invalid command action')
+
+    # Threaded version of execute action
+    def __execute_action_worker(self, datasource, action, additional):
+        print('Results from datasource: ' + datasource + '(' + threading.current_thread().getName() + ')')
+        self.__execute_action(datasource, action, additional)
+
     def parse_command(self, command):
 
         config = configparser.ConfigParser()
@@ -47,19 +64,14 @@ class MyNotesParser:
         elif len(shlex.split(command)) > 1:
             args = shlex.split(command)
             datasource = args[0]
-            action = args[1] # base
-            additional = args[2:] #' '.join(str(part) for part in args[2:]) # additional
+            action = args[1]       # base
+            additional = args[2:]  # additional
 
             if datasource in datasources:
-                #ConnectorFactory.getConnector(datasource, config[datasource]['url'], config[datasource]['api_key'], "notes") # Check
-                connector = FirebaseConnector(config[datasource]['url'], config[datasource]['api_key'], "notes")
-                if action == "new":
-                    self.__parse_new(connector, additional)
-                elif action == "search":
-                    self.__parse_search(connector, additional)
-                elif action == "show":
-                    [print(str(note)) for note in connector.find_all()]
-                else:
-                    print('Invalid command action')
+                self.__execute_action(datasource, action, additional)
+            elif datasource == '*' and action != "new":
+                for ds_name in datasources:
+                    t = threading.Thread(target=self.__execute_action_worker, args=(ds_name, action, additional))
+                    t.start()
         else:
             print('Invalid command syntax')
