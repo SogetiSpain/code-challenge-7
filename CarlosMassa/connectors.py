@@ -6,24 +6,31 @@ import re
 import configparser
 import requests
 import firebase
-from pymongo import MongoClient
+from pymongo import *
 from note import Note
+from firebase import firebase
 
 
 class ConnectorFactory:
 
-    def get_connector(self, ds_name):
-        config = configparser.ConfigParser()
-        config.read('configuration/datasources.conf')
+    @staticmethod
+    def get_connector(ds_name):
+        datasources = configparser.ConfigParser()
+        datasources.read('configuration/datasources.conf')
 
-        db_type = config[ds_name]['type']
-        url = config[ds_name]['url']
+        db_type = datasources[ds_name]['type']
+        url = datasources[ds_name]['url']
         collection = "notes"
 
         if db_type == "firebase":
-            return FirebaseConnector(url, config[ds_name]['api_key'], collection)
+            config = configparser.ConfigParser()
+            config.read('configuration/app.conf')
+            if config['config']['firebase_uses_restapi'] == '1':
+                return FirebaseConnector(url, datasources[ds_name]['api_key'], collection)
+            else:
+                return FirebaseClientConnector(url, datasources[ds_name]['api_key'], collection, datasources[ds_name]['email'])
         elif db_type == "mongodb":
-            return MongoDBConnector(url, config[ds_name]['port'], config[ds_name]['dbname'], collection)
+            return MongoDBConnector(url, datasources[ds_name]['port'], datasources[ds_name]['db_name'], collection)
 
 
 class Connector:
@@ -37,6 +44,7 @@ class Connector:
                 found.append(note)
 
         return found
+
 
 class FirebaseConnector(Connector):
 
@@ -74,12 +82,20 @@ class FirebaseClientConnector(Connector):
         self.__collection = collection
 
     def new(self, note):
-        self.__firebase.post('/' + self.__collection, note.to_json(),
-                     params={'print': 'pretty'},
-                     headers={'X_FANCY_HEADER': 'very fancy'})
+        res = self.__firebase.post('/' + self.__collection, note.__dict__,
+                     params={'print': 'pretty'})
+        return res != None
 
     def find_all(self):
-        self.__firebase.get('/' + self.__collection, {'print': 'pretty'})
+        res = self.__firebase.get('/' + self.__collection, None)
+        jsoncontent = json.loads(str(res).replace("\'","\""))
+        notes = []
+        for note_id, value in res.items():
+            n = Note("")
+            n.from_json(jsoncontent[note_id])
+            notes.append(n)
+
+        return notes
 
     def search(self, text_or_regex):
         return super().search(text_or_regex)
@@ -90,14 +106,34 @@ class MongoDBConnector(Connector):
     def __init__(self, url, port, db_name, collection):
         self.__url = url;
         self.__collection = collection
-        client = MongoClient(url, port)
+        client = MongoClient(url, int(port))
         self.__db = client[db_name]
 
     def new(self, note):
-        self.__db[self.__collection].insert(note.to_json())
+        try:
+            res = self.__db[self.__collection].insert_one(note.__dict__).inserted_id
+            return True
+        except(Exception):
+            return False
 
     def find_all(self):
-        self.__db[self.__collection].find()
+        res = self.__db[self.__collection].find()
+        notes = []
+        for note in res:
+            n = Note("")
+            n.__dict__.update(note)
+            notes.append(n)
+
+        return notes
 
     def search(self, text_or_regex):
-        return super().search(text_or_regex)
+        reg = re.compile(text_or_regex)
+        res = self.__db[self.__collection].find({'_Note__description': {'$regex': reg}})
+        notes = []
+        for note in res:
+            n = Note("")
+            n.__dict__.update(note)
+            notes.append(n)
+
+        return notes
+        #return super().search(text_or_regex)

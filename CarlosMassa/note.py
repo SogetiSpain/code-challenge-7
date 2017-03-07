@@ -7,7 +7,7 @@ from enums import Color
 
 class Note:
 
-    def __init__(self, description, tags = []):
+    def __init__(self, description, tags=[]):
         self.__description = description
         self.__tags = tags
         self.__creationDate = datetime.now().strftime('%d-%m-%Y')
@@ -24,12 +24,17 @@ class Note:
         for count, tag in enumerate(args):
             self.add_tag(tag)
 
+    def get_tags(self):
+        return self.__tags
+
+    def get_description(self):
+        return self.__description
+
+    def get_date(self):
+        return self.__creationDate
+
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def from_json(self, jsonstr):
         self.__dict__.update(jsonstr)
-
-    def get_description(self):
-        return self.__description
-
