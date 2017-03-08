@@ -26,11 +26,21 @@ class ConnectorFactory:
             config = configparser.ConfigParser()
             config.read('configuration/app.conf')
             if config['config']['firebase_uses_restapi'] == '1':
-                return FirebaseConnector(url, datasources[ds_name]['api_key'], collection)
+                return FirebaseConnector(url,
+                                         datasources[ds_name]['api_key'],
+                                         collection)
             else:
-                return FirebaseClientConnector(url, datasources[ds_name]['api_key'], collection, datasources[ds_name]['email'])
+                return FirebaseClientConnector(url,
+                                               datasources[ds_name]['api_key'],
+                                               collection,
+                                               datasources[ds_name]['email'])
         elif db_type == "mongodb":
-            return MongoDBConnector(url, datasources[ds_name]['port'], datasources[ds_name]['db_name'], collection)
+            return MongoDBConnector(url,
+                                    datasources[ds_name]['port'],
+                                    datasources[ds_name]['db_name'],
+                                    datasources[ds_name]['user'],
+                                    datasources[ds_name]['password'],
+                                    collection)
 
 
 class Connector:
@@ -103,11 +113,13 @@ class FirebaseClientConnector(Connector):
 
 class MongoDBConnector(Connector):
 
-    def __init__(self, url, port, db_name, collection):
+    def __init__(self, url, port, db_name, user, password, collection):
         self.__url = url;
         self.__collection = collection
         client = MongoClient(url, int(port))
         self.__db = client[db_name]
+        if user and password:
+            self.__db.authenticate(user, password)
 
     def new(self, note):
         try:
