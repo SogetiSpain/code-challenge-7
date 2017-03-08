@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -29,18 +33,38 @@ public class FirebaseClientConnector extends FirebaseConnector {
 	
 	@Override
 	public boolean addNote(Note note) {
-		String jsonNote = gson.toJson(note);
-		firebaseRef.child("clientData").setValue(jsonNote);
+		firebaseRef.child("data").push().setValue(note);
 		
 		return true;
 	}
 
 	@Override
 	public List<Note> getNotes(String toSeek) {
-		firebaseRef.child("message").addValueEventListener(new ValueEventListener() {
+		firebaseRef.child("data").addValueEventListener(new ValueEventListener() {
+			JSONParser parser = new JSONParser();
+			JSONObject jsonNotes = null;
+			
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
-				System.out.println(snapshot.getValue());  //prints "Do you have data? You'll love Firebase."
+				try {
+					jsonNotes = (JSONObject) parser.parse(snapshot.getValue().toString());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				if (jsonNotes != null) {
+					for (Object i : jsonNotes.keySet()) {
+						note = gson.fromJson((String) jsonNotes.get(i).toString(), Note.class);
+						note.setId((String) i);
+						String tags = note.getTagsAsString();
+						
+						if (note.getContent().toLowerCase().contains(toSeek) || tags.toLowerCase().contains(toSeek)) {
+							notes.add(note);
+						}
+					}
+				}
+				
+				
 			}
 			
 			@Override 

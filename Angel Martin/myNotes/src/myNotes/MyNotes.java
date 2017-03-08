@@ -13,7 +13,7 @@ public class MyNotes {
 	public static void main(String[] args) {
 		
 		CommandInterpreter interpreter = new CommandInterpreter();
-		DatabaseManager conn = new DatabaseManager(new FirebaseRESTConnector());
+		DatabaseManager conn = new DatabaseManager(new FirebaseClientConnector());
 		List<Note> notes = null;
 		Scanner sc = new Scanner(System.in);
 		boolean correctParsing = false;
