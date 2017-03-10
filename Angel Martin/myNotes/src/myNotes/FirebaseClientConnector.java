@@ -1,12 +1,12 @@
 package myNotes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import java.util.Scanner;
+import java.util.Set;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
@@ -17,8 +17,10 @@ import com.firebase.security.token.TokenGenerator;
 
 public class FirebaseClientConnector extends FirebaseConnector {
 	
+	private static final int DB_TIMEOUT = 2;
 	private Firebase firebaseRef;
 	private String clientToken;
+	private boolean somethingDeleted;
 	
 	
 	public FirebaseClientConnector() {
@@ -33,38 +35,33 @@ public class FirebaseClientConnector extends FirebaseConnector {
 	
 	@Override
 	public boolean addNote(Note note) {
-		firebaseRef.child("data").push().setValue(note);
+		boolean saved = false;
 		
-		return true;
+		try {
+			firebaseRef.child("data").push().setValue(note);
+			saved = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return saved;
 	}
 
 	@Override
 	public List<Note> getNotes(String toSeek) {
+		notes = new ArrayList<>();
+		double timeout = 0;
+		
 		firebaseRef.child("data").addValueEventListener(new ValueEventListener() {
-			JSONParser parser = new JSONParser();
-			JSONObject jsonNotes = null;
-			
 			@Override
-			public void onDataChange(DataSnapshot snapshot) {
-				try {
-					jsonNotes = (JSONObject) parser.parse(snapshot.getValue().toString());
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				
-				if (jsonNotes != null) {
-					for (Object i : jsonNotes.keySet()) {
-						note = gson.fromJson((String) jsonNotes.get(i).toString(), Note.class);
-						note.setId((String) i);
-						String tags = note.getTagsAsString();
-						
-						if (note.getContent().toLowerCase().contains(toSeek) || tags.toLowerCase().contains(toSeek)) {
-							notes.add(note);
-						}
+			public synchronized void onDataChange(DataSnapshot snapshot) {
+	            Note note = null;
+				for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+					note = postSnapshot.getValue(Note.class);
+					if (note.getContent().toLowerCase().contains(toSeek) || note.formatTagsAsString().toLowerCase().contains(toSeek)) {
+						notes.add(note);
 					}
-				}
-				
-				
+		        }
 			}
 			
 			@Override 
@@ -73,7 +70,17 @@ public class FirebaseClientConnector extends FirebaseConnector {
 			}
 		});
 		
-		return null;
+		// custom timeout to prevent asynchronous behavior of listeners
+		while (notes.isEmpty() && timeout < DB_TIMEOUT) {
+			try {
+				Thread.sleep(100);
+				timeout = timeout + 0.100;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return notes;
 	}
 
 	@Override
@@ -83,13 +90,72 @@ public class FirebaseClientConnector extends FirebaseConnector {
 
 	@Override
 	public void deleteNotes(String toSeek, boolean deleteAll) {
-		// TODO Auto-generated method stub
+		somethingDeleted = false;
+		double timeout = 0;
+		
+		if (!"".equals(toSeek) || deleteAll) {
+			notes = getNotes();
+			
+			
+			
+			for (Note i : notes) {
+				if ((i.getContent().toLowerCase().contains(toSeek) || i.formatTagsAsString().toLowerCase().contains(toSeek)) && i.getId() != "-1") {
+
+					try {
+					
+						firebaseRef.child("data").addValueEventListener(new ValueEventListener() {
+							@Override
+							public synchronized void onDataChange(DataSnapshot snapshot) {
+					            Note note = null;
+					            
+								for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+									note = postSnapshot.getValue(Note.class);
+									if (note.getContent().toLowerCase().contains(toSeek) || note.formatTagsAsString().toLowerCase().contains(toSeek)) {
+										Firebase ref = postSnapshot.getRef();
+										ref.removeValue();
+										
+										somethingDeleted = true;
+										
+										if (!deleteAll) {
+											System.out.println(">>>: deleted: " + i.getContent());
+										}
+									}
+						        }
+							}
+							
+							@Override 
+							public void onCancelled(FirebaseError error) {
+								
+							}
+						});
+						
+					} catch (Exception e) {
+						System.out.println(">>>: there was some problem deleting your note, please check your network connectivity.     |:|  =D~~~~~");
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			
+			// custom timeout to prevent asynchronous behavior of listeners
+			while (!somethingDeleted && timeout < DB_TIMEOUT) {
+				try {
+					Thread.sleep(100);
+					timeout = timeout + 0.100;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			displayDeleteMessage(deleteAll, somethingDeleted);
+			
+		}
 		
 	}
 	
 	private void generateToken() {
 		Map<String, Object> payload = new HashMap<String, Object>();
-		payload.put("uid", "uniqueId1");
+		payload.put("uid", "uniqueId5461324564");
 		payload.put("some", "arbitrary");
 		payload.put("data", "here");
 		TokenGenerator tokenGenerator = new TokenGenerator("e6d0skdx8BIET471DeFwbKtkHTFX1RH4omEaQcDl");

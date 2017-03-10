@@ -10,7 +10,7 @@ public class MyNotes {
 	private static boolean deleteAll = false;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		CommandInterpreter interpreter = new CommandInterpreter();
 		DatabaseManager conn = new DatabaseManager(new FirebaseClientConnector());
@@ -80,7 +80,7 @@ public class MyNotes {
 		System.out.println("::::::::::::::::::::::::::::::::");
 		System.out.println(":::::::::See you soon!!::::     ");
 		System.out.println(":::::::::::::::::::::           ");
-		
+		System.exit(0);
 		
 	}
 	
@@ -89,7 +89,7 @@ public class MyNotes {
 			if (hideTags)
 				System.out.println(">>>: " + i.getContent());
 			else {
-				System.out.println(">>>: " + i.getContent() + "   " + i.getFormatedTags());
+				System.out.println(">>>: " + i.getContent() + "   " + i.formatTags());
 			}
 				
 		}
@@ -158,28 +158,31 @@ public class MyNotes {
 	
 	public static void displayHelp() {
 		System.out.println(" ");
-		System.out.println(".............................................................");
-		System.out.println(".............................................................");
-		System.out.println("                                                             ");
-		System.out.println("   ---  mynotes [command] [option] [data]  ---               ");
-		System.out.println("                                                             ");
-		System.out.println("    COMAND:     OPTION:    EXPLANATION:                      ");
-		System.out.println("      new        -t          add a new tag for each <-t>     ");
-		System.out.println("                                                             ");
-		System.out.println("      show       -h          hide tags when showing notes    ");
-		System.out.println("                                                             ");
-		System.out.println("      delete     -a          delete all notes                ");
-		System.out.println("                                                             ");
-		System.out.println("      connector              change to one of the followings:");
-		System.out.println("                             <fbRest>                        ");
-		System.out.println("                             <fbClient>                      ");
-		System.out.println("                             <mongoRest>                     ");
-		System.out.println("                                                             ");
-		System.out.println("      help                   show possible actions           ");
-		System.out.println("                                                             ");
-		System.out.println("      exit                   terminates the program          ");
-		System.out.println("                                                             ");
-		System.out.println(".............................................................");
+		System.out.println("...............................................................................");
+		System.out.println("...............................................................................");
+		System.out.println("                                                                               ");
+		System.out.println("           ---  mynotes [command] [option] [data]  ---                         ");
+		System.out.println("                                                                               ");
+		System.out.println("    COMAND:                    OPTION:     EXPLANATION:                        ");
+		System.out.println("      new       [new note]                   add a new note to de DB           ");
+		System.out.println("                                 -t          add a new tag for each <-t>       ");
+		System.out.println("                                                                               ");
+		System.out.println("      show      <text to seek>               show notes based on a pattern     ");
+		System.out.println("                                 -h          hide tags when showing notes      ");
+		System.out.println("                                                                               ");
+		System.out.println("      delete    [text to seek]               delete notes based on a pattern   ");
+		System.out.println("                                 -a          delete all notes                  ");
+		System.out.println("                                                                               ");
+		System.out.println("      connector [connector]                  change to one of the followings:  ");
+		System.out.println("                                             <fbRest>                          ");
+		System.out.println("                                             <fbClient>                        ");
+		System.out.println("                                             <mongoRest>                       ");
+		System.out.println("                                                                               ");
+		System.out.println("      help                                   show possible actions             ");
+		System.out.println("                                                                               ");
+		System.out.println("      exit                                   terminates the program            ");
+		System.out.println("                                                                               ");
+		System.out.println("...............................................................................");
 		System.out.println(" ");
 		System.out.println(" ");
 	}

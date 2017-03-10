@@ -9,6 +9,7 @@ public class FirebasePropertiesReader implements PropertiesReader {
 	
 	private String baseURL = "";
 	private	String urlCollection = "";
+	private String dataExtension = "";
 	private String authPrefix = "";
 	private String authToken = "";
 	private String webAPIKey = "";
@@ -28,6 +29,7 @@ public class FirebasePropertiesReader implements PropertiesReader {
 			// get the property value and print it out
 			baseURL = prop.getProperty("baseURL");
 			urlCollection = prop.getProperty("urlCollection");
+			dataExtension = prop.getProperty("dataExtension");
 			authPrefix = prop.getProperty("authPrefix");
 			authToken = prop.getProperty("authToken");
 			webAPIKey = prop.getProperty("webAPIKey");
@@ -64,6 +66,10 @@ public class FirebasePropertiesReader implements PropertiesReader {
 
 	public String getWebAPIKey() {
 		return webAPIKey;
+	}
+
+	public String getDataExtension() {
+		return dataExtension;
 	}
 	
 }

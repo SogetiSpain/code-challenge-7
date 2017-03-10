@@ -8,6 +8,7 @@ public abstract class FirebaseConnector extends Connector {
 	
 	protected String baseURL = "";
 	protected String urlCollection = "";
+	protected String dataExtension = "";
 	protected String authPrefix = "";
 	protected String authToken = "";
 	protected String webAPIKey = "";
@@ -23,6 +24,7 @@ public abstract class FirebaseConnector extends Connector {
 		
 		baseURL = pr.getBaseURL();
 		urlCollection = pr.getUrlCollection();
+		dataExtension = pr.getDataExtension();
 		authPrefix = pr.getAuthPrefix();
 		authToken = pr.getAuthToken();
 		webAPIKey = pr.getWebAPIKey();

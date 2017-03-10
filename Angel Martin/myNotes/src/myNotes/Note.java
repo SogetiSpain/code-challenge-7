@@ -3,6 +3,8 @@ package myNotes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
+
 public class Note {
 	
 	private String id;
@@ -30,7 +32,7 @@ public class Note {
 		return tags;
 	}
 	
-	public String getTagsAsString() {
+	public String formatTagsAsString() {
 		String stringTags = "";
 		
 		if (tags != null)
@@ -41,7 +43,7 @@ public class Note {
 		return stringTags;
 	}
 	
-	public String getFormatedTags() {
+	public String formatTags() {
 		String aux = "";
 		
 		if (tags != null && !tags.isEmpty()) {
