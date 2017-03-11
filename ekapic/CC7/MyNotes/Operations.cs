@@ -22,6 +22,7 @@ namespace MyNotes
                 throw new ArgumentNullException("Empty note text");
             }
             this._repository.AddNote(note);
+            Console.WriteLine("Your note was saved.");
         }
 
         public int ShowNotes()
@@ -29,7 +30,7 @@ namespace MyNotes
             var notes = this._repository.GetNotes();
             foreach(var note in notes)
             {
-                Console.WriteLine($"{note.Date.ToShortDateString()} - {note.Text}");
+                Console.WriteLine($"{note.Date.ToShortDateString()} - {note.Text}.");
             }
             return notes.Count();
         }

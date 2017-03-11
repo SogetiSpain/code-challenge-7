@@ -10,21 +10,27 @@ namespace MyNotes
     class Program
     {
         private static INotesRepository _repository;
+        private static Operations _ops;
 
         static void Main(string[] args)
         {
             InitializeDependencies();
+            var command = CheckParameters(args);
 
-            // https://code-challenge-7.firebaseio.com/notes.json?auth=7gx7McBjKkw1lUgyhfcmjl4pJ2bUsMjfx8Sxwdtz
-            /*
-              mynotes new Aprender a crear árboles binarios invertidos
-                Your note was saved.
-
-                mynotes show
-                20-02-2017 - Aprender a crear árboles binarios invertidos.
-                19-02-2017 - Esto de tomar notas con un programa de consola mola. 
-            */
-
+            if(command != null)
+            {
+                switch(command)
+                {
+                    case "show":
+                        _ops.ShowNotes();
+                        break;
+                    case "add":
+                        var text = CombineAddArgumentsIntoString(args);
+                        _ops.AddNote(text);
+                        break;
+                }
+                Console.ReadLine();
+            }
         }
 
 
@@ -32,14 +38,36 @@ namespace MyNotes
         private static void InitializeDependencies()
         {
             _repository = new FirebaseNotesRepository();
+            _ops = new Operations(_repository);
         }
 
-        private static void CheckParameters(string[] args)
+        private static string CheckParameters(string[] args)
         {
-            if(args.Length < 2)
+            if(args.Length == 0)
             {
                 Console.WriteLine("Please use the 'show' or 'new' command.");
+                return null;
             }
+
+            var arg1 = args[0];
+            if(arg1.ToLower() == "show")
+            {
+                return "show";
+            }
+            if(arg1.ToLower() == "add")
+            {
+                if (args.Length >= 2)
+                {
+                    return "add";
+                }
+            }
+            return null;    
+        }
+
+        private static string CombineAddArgumentsIntoString(string[] args)
+        {
+            var result = String.Join(" ", args.Skip(1).ToArray());
+            return result;
         }
     }
 }
