@@ -158,7 +158,7 @@ public class FirebaseClientConnector extends FirebaseConnector {
 		payload.put("uid", "uniqueId5461324564");
 		payload.put("some", "arbitrary");
 		payload.put("data", "here");
-		TokenGenerator tokenGenerator = new TokenGenerator("e6d0skdx8BIET471DeFwbKtkHTFX1RH4omEaQcDl");
+		TokenGenerator tokenGenerator = new TokenGenerator();
 		clientToken = tokenGenerator.createToken(payload);
 	}
 	
