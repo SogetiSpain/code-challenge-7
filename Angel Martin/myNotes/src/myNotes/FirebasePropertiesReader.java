@@ -12,7 +12,6 @@ public class FirebasePropertiesReader implements PropertiesReader {
 	private String dataExtension = "";
 	private String authPrefix = "";
 	private String authToken = "";
-	private String webAPIKey = "";
 	
 	@Override
 	public void read(String configFile) {
@@ -32,7 +31,6 @@ public class FirebasePropertiesReader implements PropertiesReader {
 			dataExtension = prop.getProperty("dataExtension");
 			authPrefix = prop.getProperty("authPrefix");
 			authToken = prop.getProperty("authToken");
-			webAPIKey = prop.getProperty("webAPIKey");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -62,10 +60,6 @@ public class FirebasePropertiesReader implements PropertiesReader {
 
 	public String getAuthPrefix() {
 		return authPrefix;
-	}
-
-	public String getWebAPIKey() {
-		return webAPIKey;
 	}
 
 	public String getDataExtension() {

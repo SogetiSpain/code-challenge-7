@@ -48,7 +48,7 @@ public class FirebaseClientConnector extends FirebaseConnector {
 	}
 
 	@Override
-	public List<Note> getNotes(String toSeek) {
+	public synchronized List<Note> getNotes(String toSeek) {
 		notes = new ArrayList<>();
 		double timeout = 0;
 		
@@ -89,7 +89,7 @@ public class FirebaseClientConnector extends FirebaseConnector {
 	}
 
 	@Override
-	public void deleteNotes(String toSeek, boolean deleteAll) {
+	public synchronized void deleteNotes(String toSeek, boolean deleteAll) {
 		somethingDeleted = false;
 		double timeout = 0;
 		
@@ -158,7 +158,7 @@ public class FirebaseClientConnector extends FirebaseConnector {
 		payload.put("uid", "uniqueId5461324564");
 		payload.put("some", "arbitrary");
 		payload.put("data", "here");
-		TokenGenerator tokenGenerator = new TokenGenerator("e6d0skdx8BIET471DeFwbKtkHTFX1RH4omEaQcDl");
+		TokenGenerator tokenGenerator = new TokenGenerator(authToken);
 		clientToken = tokenGenerator.createToken(payload);
 	}
 	

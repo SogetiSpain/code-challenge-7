@@ -55,8 +55,6 @@ public class FirebaseRESTConnector extends FirebaseConnector {
 				}
 			}
 			conn.disconnect();
-			
-			//displaySaveResult(correctlySaved); //TODO
 	
 		} catch (MalformedURLException e) {
 		
@@ -138,7 +136,6 @@ public class FirebaseRESTConnector extends FirebaseConnector {
 	
 	@Override
 	public void deleteNotes(String toSeek, boolean deleteAll) {
-		toSeek = toSeek.trim();
 		boolean somethingDeleted = false;
 		
 		if (!"".equals(toSeek) || deleteAll) {
@@ -180,7 +177,7 @@ public class FirebaseRESTConnector extends FirebaseConnector {
 			
 			displayDeleteMessage(deleteAll, somethingDeleted); //TODO
 			
-		}
+			}
 	}
 	
 	

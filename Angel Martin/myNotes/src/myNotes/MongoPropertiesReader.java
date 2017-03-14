@@ -7,9 +7,9 @@ import java.util.Properties;
 
 public class MongoPropertiesReader implements PropertiesReader {
 	
-	private String baseURL = "";
-	private String componentURL = "";
-	private String password = "";
+	private String address = "";
+	private int port = -1;
+	private String databaseName = "";
 	
 	
 	@Override
@@ -25,9 +25,9 @@ public class MongoPropertiesReader implements PropertiesReader {
 			prop.load(input);
 
 			// get the property value and print it out
-			baseURL = prop.getProperty("baseURL");
-			componentURL = prop.getProperty("componentURL");
-			password = prop.getProperty("password");
+			address = prop.getProperty("address");
+			port = Integer.valueOf(prop.getProperty("port"));
+			databaseName = prop.getProperty("databaseName");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -43,16 +43,16 @@ public class MongoPropertiesReader implements PropertiesReader {
 		
 	}
 
+	public String getAddress() {
+		return address;
+	}
+	
+	public int getPort() {
+		return port;
+	}
 
-	public String getBaseURL() {
-		return baseURL;
+	public String getDatabaseName() {
+		return databaseName;
 	}
 	
-	public String getComponentURL() {
-		return componentURL;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
 }

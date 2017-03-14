@@ -58,6 +58,12 @@
 	    <version>3.0.0</version>
 	</dependency>
 
+	<!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver -->
+	<dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongodb-driver</artifactId>
+        <version>3.4.2</version>
+    </dependency>
 	
 		
 		

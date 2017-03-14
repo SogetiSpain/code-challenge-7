@@ -14,7 +14,16 @@ public class DatabaseManager {
 	
 	
 	public boolean addNote(Note note) {
-		return displaySaveResult(connector.addNote(note));
+		boolean result;
+		
+		if ("".equals(note.getContent())) {
+			System.out.println(">>>: Unable to save an empty note...");
+			result = false;
+		} else {
+			result = displaySaveResult(connector.addNote(note));
+		}
+		
+		return result;
 	}
 
 	public List<Note> getNotes(String toSeek) {
@@ -46,10 +55,15 @@ public class DatabaseManager {
 				System.out.println(">>>: Using Firebase Client API connection...");
 				System.out.println(">>>: Waiting for authentication, please wait...");
 				break;
-			case "mongorest":
-				this.connector = new MongoRESTConnector();
-				System.out.println(">>>: Using MongoDB RESP API connection...");
+			case "mongoclient":
+				this.connector = new MongoClientConnector();
+				System.out.println(">>>: Using MongoDB Client API connection...");
 				break;
+			default:
+				System.out.println(">>>: Unkown connector please select one of the following: ");
+				System.out.println(">>>:   fbRest        <-------   Firebase REST API");
+				System.out.println(">>>:   fbClient      <-------   Firebase Client API");
+				System.out.println(">>>:   mongoClient   <-------   MongoDB Client API");
 		}
 	}
 	
