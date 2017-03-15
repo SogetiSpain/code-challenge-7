@@ -1,5 +1,7 @@
 package myNotes;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseManager {
@@ -15,11 +17,14 @@ public class DatabaseManager {
 	
 	public boolean addNote(Note note) {
 		boolean result;
+		Date date = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 		
 		if ("".equals(note.getContent())) {
 			System.out.println(">>>: Unable to save an empty note...");
 			result = false;
 		} else {
+			note.setDate(df.format(date));
 			result = displaySaveResult(connector.addNote(note));
 		}
 		

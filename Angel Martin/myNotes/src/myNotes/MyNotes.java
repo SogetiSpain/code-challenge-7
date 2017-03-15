@@ -87,9 +87,9 @@ public class MyNotes {
 	private static void displayNotes(List<Note> notes) {
 		for (Note i : notes) {
 			if (hideTags)
-				System.out.println(">>>: " + i.getContent());
+				System.out.println(">>>: " + i.getDate() + " - " + i.getContent());
 			else {
-				System.out.println(">>>: " + i.getContent() + "   " + i.formatTags());
+				System.out.println(">>>: " + i.getDate() + " - " + i.getContent() + "   " + i.formatTags());
 			}
 				
 		}

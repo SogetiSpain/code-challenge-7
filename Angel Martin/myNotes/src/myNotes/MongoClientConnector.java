@@ -38,7 +38,8 @@ public class MongoClientConnector extends MongoConnector {
 		boolean saved = false;
 		
 		Document document = new Document("tags", note.getTags())
-	               .append("content", note.getContent());
+	               .append("content", note.getContent())
+	               .append("date", note.getDate());
 		
 		try {
 			collection.insertOne(document);
@@ -60,6 +61,7 @@ public class MongoClientConnector extends MongoConnector {
 		    	   auxNote.setId(document.get("_id", ObjectId.class).toHexString());
 		           auxNote.setContent(document.getString("content"));
 		           auxNote.setTags(document.get("tags", ArrayList.class));
+		           auxNote.setDate(document.getString("date"));
 		           if ((auxNote.getContent().toLowerCase().contains(toSeek) || auxNote.formatTagsAsString().toLowerCase().contains(toSeek))) {
 		        	   notes.add(auxNote);
 		           }

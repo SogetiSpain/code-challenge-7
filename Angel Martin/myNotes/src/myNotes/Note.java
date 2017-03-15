@@ -10,6 +10,7 @@ public class Note {
 	private String id;
 	private List<String> tags;
 	private String content = "";
+	private String date = "";
 	
 	
 	public Note() {
@@ -81,6 +82,14 @@ public class Note {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
 	}
 	
 }
