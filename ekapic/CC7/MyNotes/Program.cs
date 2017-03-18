@@ -37,7 +37,8 @@ namespace MyNotes
 
         private static void InitializeDependencies()
         {
-            _repository = new FirebaseNotesRepository();
+            //_repository = new FirebaseNotesRepository();
+            _repository = new DocumentDbNotesRepository();
             _ops = new Operations(_repository);
         }
 
