@@ -50,8 +50,8 @@ namespace MyNotes.Data
 
             var result = this.Get(requestUrl);
 
-            var notes = JsonConvert.DeserializeObject<List<Note>>(result);
-            return notes;
+            var notes = JsonConvert.DeserializeObject<Dictionary<string, Note>>(result);
+            return notes.Values.ToList();
         }
 
         private string Get(string url)
