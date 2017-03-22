@@ -18,8 +18,8 @@ namespace MyNotes.App
         public App()
         {
             //Firebase Info:
-            var resourceUrl = "https://mynotes-87fd2.firebaseio.com/";
-            var securityToken = "XUCrsUoS3lxsQlYMcsBuIhGI21OH1N5iYM3sJCUD";
+            var resourceUrl = "[YOUR FIREBASE RESOURCE URL]";
+            var securityToken = "[YOUR SECRET]";
             _notes = new FirebaseClient<Note>(resourceUrl,securityToken);
 
             //If you want to switch to another client you have to set here the 
